@@ -1,0 +1,102 @@
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@{
+    var afTokens = Antiforgery.GetAndStoreTokens(Context);
+    var carePhone = Configuration["Support:CustomerCarePhone"] ?? "";
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="csrf-token" content="@afTokens.RequestToken" />
+    <title>@ViewData["Title"] · Kazan Kazan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="app-body @(ViewData["BodyClass"] ?? "")"
+      data-authenticated="@(User.Identity?.IsAuthenticated == true ? "true" : "false")"
+      data-support-tel="@carePhone">
+    <div class="app-bg" aria-hidden="true"></div>
+
+    <header class="app-header">
+        <div class="shell header-inner">
+            <a class="brand" asp-controller="Home" asp-action="Index" aria-label="Ana sayfa">
+                <span class="brand-mark">₺</span>
+                <span class="brand-text">Kazan Kazan</span>
+            </a>
+            <nav class="nav-main" aria-label="Site">
+                <a asp-controller="Legal" asp-action="Privacy">Gizlilik</a>
+                <a asp-controller="Legal" asp-action="Security">Güvenlik</a>
+                <a asp-controller="Legal" asp-action="Terms">Koşullar</a>
+            </nav>
+            <div class="nav-auth">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="nav-user">@User.Identity.Name</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="inline-form">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-ghost">Çıkış</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="btn btn-ghost" asp-controller="Account" asp-action="Login">Giriş</a>
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Kayıt ol</a>
+                }
+            </div>
+        </div>
+    </header>
+
+    <div class="shell main-wrap">
+        @if (TempData["Success"] is string ok && !string.IsNullOrWhiteSpace(ok))
+        {
+            <div class="alert alert-success" role="status">@ok</div>
+        }
+        @if (TempData["Error"] is string err && !string.IsNullOrWhiteSpace(err))
+        {
+            <div class="alert alert-error" role="alert">@err</div>
+        }
+
+        <aside class="sim-banner" role="note">Demo — gerçek ödeme yok.</aside>
+
+        <main class="app-main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <div id="app-toast" class="app-toast" role="status" aria-live="polite"></div>
+
+    <div id="winner-overlay" class="winner-overlay" hidden>
+        <div class="winner-overlay-backdrop" data-close-winner aria-hidden="true"></div>
+        <div class="winner-modal" role="dialog" aria-modal="true" aria-labelledby="winner-modal-title">
+            <canvas id="winner-confetti" class="winner-confetti" aria-hidden="true"></canvas>
+            <p id="winner-modal-title" class="winner-modal-kicker">Kazanan</p>
+            <p id="winner-modal-name" class="winner-modal-name"></p>
+            <div class="winner-modal-actions">
+                <a id="winner-care-link" class="btn btn-primary" href="#">Destek</a>
+                <button type="button" class="btn btn-secondary" data-close-winner>Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        <div class="shell footer-inner">
+            <p>© @DateTime.UtcNow.Year Kazan Kazan</p>
+            <div class="footer-links">
+                <a asp-controller="Legal" asp-action="Privacy">Gizlilik politikası</a>
+                <a asp-controller="Legal" asp-action="Security">Güvenlik</a>
+                <a asp-controller="Legal" asp-action="Terms">Kullanım koşulları</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
+    <script src="~/js/kumbara.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

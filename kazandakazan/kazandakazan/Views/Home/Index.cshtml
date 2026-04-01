@@ -1,0 +1,279 @@
+@model HomeDashboardViewModel
+@using System.Globalization
+@using kazandakazan.Services
+@{
+    ViewData["Title"] = "Fon durumu";
+    var p = Model.Pot;
+    var tr = CultureInfo.GetCultureInfo("tr-TR");
+    var chips = PotService.ContributeChipAmounts;
+    var demoChips = PotService.DemoChipAmounts;
+}
+
+@if (Model.LastWinner is { } winner)
+{
+    <div class="winner-strip" role="status">
+        <span class="winner-strip-kicker">Son çekiliş</span>
+        <span class="winner-strip-name">@winner.UserName</span>
+        <time class="winner-strip-meta" datetime="@winner.ClosedAtUtc.ToString("o")">@winner.ClosedAtUtc.ToString("dd MMMM yyyy, HH:mm", tr) · UTC</time>
+    </div>
+}
+
+<section class="hero hero--pro">
+    <p class="hero-kicker">Demo</p>
+    <h1 class="hero-heading">Fon</h1>
+</section>
+
+@if (p is null)
+{
+    <div class="empty-state">Yükleniyor…</div>
+}
+else
+{
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        ViewData["BodyClass"] = "pot-page";
+    }
+
+    var fillPct = Math.Min(100, p.FillPercent);
+    var maxH = 196d;
+    var bottomY = 284d;
+    var liqH = maxH * fillPct / 100.0;
+    var liqY = bottomY - liqH;
+    var vaultInteractive = User.Identity?.IsAuthenticated == true && p.IsOpen;
+
+    <div class="fund-stage">
+        <div class="fund-stage-inner">
+            <div class="fund-metrics fund-metrics--center">
+                <p class="fund-metrics-label">Doluluk oranı</p>
+                <p class="fund-metrics-value" data-pot-percent-display>@p.FillPercent.ToString("0.#", tr)%</p>
+                <p class="fund-metrics-note" data-pot-target-line>Hedef @p.TargetAmount.ToString("N0", tr) ₺</p>
+            </div>
+
+            <div class="fund-vault-wrap@(fillPct >= 99 ? " fund-vault-wrap--hot" : "") fund-vault-wrap--showcase">
+            <div class="fund-mascot" aria-hidden="true">
+                <svg class="fund-mascot-svg" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                    <ellipse cx="28" cy="24" rx="11" ry="13" fill="#9a6b45" transform="rotate(-22 28 24)" />
+                    <ellipse cx="72" cy="24" rx="11" ry="13" fill="#9a6b45" transform="rotate(22 72 24)" />
+                    <ellipse cx="50" cy="58" rx="40" ry="36" fill="#c9955c" />
+                    <ellipse cx="50" cy="62" rx="30" ry="26" fill="#e4bc88" />
+                    <ellipse cx="38" cy="52" rx="5" ry="7" fill="#0f172a" />
+                    <ellipse cx="62" cy="52" rx="5" ry="7" fill="#0f172a" />
+                    <circle cx="40" cy="49" r="1.8" fill="#f8fafc" />
+                    <circle cx="64" cy="49" r="1.8" fill="#f8fafc" />
+                    <ellipse cx="50" cy="64" rx="3.5" ry="2.8" fill="#7c4a2d" />
+                    <path d="M 38 72 Q 50 80 62 72" fill="none" stroke="#5c3d2e" stroke-width="2.2" stroke-linecap="round" />
+                    <circle cx="30" cy="64" r="5.5" fill="#f472b6" opacity="0.32" />
+                    <circle cx="70" cy="64" r="5.5" fill="#f472b6" opacity="0.32" />
+                    <path d="M 78 68 Q 88 62 90 52" fill="none" stroke="#c9955c" stroke-width="5" stroke-linecap="round" />
+                    <circle cx="90" cy="50" r="4" fill="#c9955c" />
+                </svg>
+            </div>
+            <button type="button"
+                    class="fund-vault-hit@(fillPct >= 99 ? " fund-vault-hit--hot" : "")"
+                    data-vault
+                    data-vault-interactive="@(vaultInteractive ? "true" : "false")"
+                    data-current-balance="@p.CurrentBalance.ToString(CultureInfo.InvariantCulture)"
+                    aria-label="@(vaultInteractive ? "Kasaya at / bakiye göster" : "Kasa")">
+                <span class="fund-vault-toast" data-vault-pop hidden></span>
+                <svg class="fund-svg" data-fund-svg data-fill-max="@maxH.ToString(CultureInfo.InvariantCulture)" data-fill-bottom="@bottomY.ToString(CultureInfo.InvariantCulture)" viewBox="0 0 280 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="vault-glass" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.12" />
+                            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.02" />
+                        </linearGradient>
+                        <linearGradient id="vault-liquid" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:#064e3b" />
+                            <stop offset="45%" style="stop-color:#0d9488" />
+                            <stop offset="100%" style="stop-color:#fcd34d" />
+                        </linearGradient>
+                        <clipPath id="vault-inner">
+                            <rect x="70" y="88" width="140" height="196" rx="28" />
+                        </clipPath>
+                    </defs>
+                    <rect x="56" y="72" width="168" height="228" rx="36" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="2" />
+                    <rect x="70" y="88" width="140" height="196" rx="28" fill="rgba(15,23,42,0.65)" />
+                    <g clip-path="url(#vault-inner)">
+                        <rect x="70" y="88" width="140" height="196" fill="#0b1220" />
+                        <rect id="fund-liquid-fill"
+                              x="70"
+                              y="@liqY.ToString("0.###", CultureInfo.InvariantCulture)"
+                              width="140"
+                              height="@liqH.ToString("0.###", CultureInfo.InvariantCulture)"
+                              fill="url(#vault-liquid)" />
+                        <rect x="70" y="88" width="140" height="196" fill="url(#vault-glass)" />
+                    </g>
+                    <rect x="118" y="56" width="44" height="14" rx="6" fill="rgba(255,255,255,0.2)" />
+                    <line x1="118" y1="63" x2="162" y2="63" stroke="rgba(0,0,0,0.35)" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+        </div>
+        </div>
+    </div>
+
+    <div class="stat-board stat-board--center">
+        <div class="stat-tile">
+            <span class="stat-tile-label">Kasada</span>
+            <span class="stat-tile-value stat-tile-value--accent" data-pot-current>@p.CurrentBalance.ToString("N0", tr) ₺</span>
+        </div>
+        <div class="stat-tile">
+            <span class="stat-tile-label">Hedef</span>
+            <span class="stat-tile-value" data-pot-target>@p.TargetAmount.ToString("N0", tr) ₺</span>
+        </div>
+        <div class="stat-tile">
+            <span class="stat-tile-label">Bilet (toplam)</span>
+            <span class="stat-tile-value" data-pot-tickets>@p.TotalTickets.ToString("N0", tr)</span>
+        </div>
+    </div>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <section class="control-panel" data-pot-id="@p.PotId">
+            <input type="hidden" value="@p.PotId" data-pot-id-input />
+
+            <h2 class="control-panel-title">İşlem</h2>
+
+            <div class="stat-board stat-board--tight">
+                <div class="stat-tile">
+                    <span class="stat-tile-label">Cüzdan</span>
+                    <span class="stat-tile-value stat-tile-value--accent" data-user-wallet>@((p.UserWallet ?? 0).ToString("N0", tr)) ₺</span>
+                </div>
+                <div class="stat-tile">
+                    <span class="stat-tile-label">Biletleriniz</span>
+                    <span class="stat-tile-value" data-user-tickets>@((p.UserTicketCount ?? 0).ToString("N0", tr))</span>
+                </div>
+                <div class="stat-tile">
+                    <span class="stat-tile-label">Payınız</span>
+                    <span class="stat-tile-value" data-user-chance>
+                        @(p.UserWinChancePercent is null ? "—" : $"{p.UserWinChancePercent:0.##} %")
+                    </span>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+            <div class="bank-deposit-panel">
+                <h3 class="control-subtitle">Banka yükle</h3>
+                <form class="bank-deposit-form" data-bank-deposit-form novalidate>
+                    <div class="control-grid">
+                        <div class="control-field">
+                            <label class="control-label" for="bank-sim-account">Banka</label>
+                            <select id="bank-sim-account" class="control-select" data-bank-label>
+                                <option value="">—</option>
+                                <option value="Ziraat Bankası">Ziraat Bankası</option>
+                                <option value="Türkiye İş Bankası">Türkiye İş Bankası</option>
+                                <option value="Garanti BBVA">Garanti BBVA</option>
+                                <option value="Akbank">Akbank</option>
+                                <option value="Yapı Kredi">Yapı Kredi</option>
+                                <option value="QNB Finansbank">QNB Finansbank</option>
+                                <option value="VakıfBank">VakıfBank</option>
+                                <option value="Diğer">Diğer</option>
+                            </select>
+                        </div>
+                        <div class="control-field">
+                            <label class="control-label" for="bank-sim-amount">Tutar (₺)</label>
+                            <input id="bank-sim-amount"
+                                   class="control-select bank-deposit-input"
+                                   type="number"
+                                   inputmode="numeric"
+                                   step="5"
+                                   min="5"
+                                   max="500000"
+                                   placeholder="örn. 2500"
+                                   required
+                                   data-bank-amount />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-wide">Yükle</button>
+                </form>
+            </div>
+
+            <div class="section-divider"></div>
+            <h3 class="control-subtitle">Demo</h3>
+            <div class="chip-grid chip-grid--panel">
+                @foreach (var d in demoChips)
+                {
+                    <button type="button" class="chip-btn" data-demo-amount="@d.ToString(CultureInfo.InvariantCulture)">+@d.ToString("N0", tr) ₺</button>
+                }
+            </div>
+
+            @if (p.IsOpen)
+            {
+                <div class="control-grid">
+                    <div class="control-field">
+                        <label class="control-label" for="reserve-amount">Rezerv</label>
+                        <select id="reserve-amount" class="control-select" data-reserve-select>
+                            <option value="0">0 ₺</option>
+                            <option value="10">10 ₺</option>
+                            <option value="20">20 ₺</option>
+                            <option value="50" selected>50 ₺</option>
+                            <option value="100">100 ₺</option>
+                            <option value="200">200 ₺</option>
+                            <option value="500">500 ₺</option>
+                            <option value="1000">1.000 ₺</option>
+                            <option value="10000">10.000 ₺</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button type="button" class="btn btn-secondary btn-wide" data-action="contribute-all">Hepsini at</button>
+                </div>
+            }
+            else
+            {
+                <p class="banner-error">Tur kapalı.</p>
+            }
+        </section>
+
+        <aside class="pot-dock" role="toolbar" aria-label="Kısayol">
+            <div class="pot-dock-inner shell">
+                @if (p.IsOpen)
+                {
+                    <div class="pot-dock-row pot-dock-row--toss">
+                        <label class="pot-dock-label" for="toss-amount-dock">Atış</label>
+                        <div class="pot-dock-toss">
+                            <select id="toss-amount-dock" class="control-select pot-dock-select" data-toss-select>
+                                @foreach (var c in chips)
+                                {
+                                    <option value="@c.ToString(CultureInfo.InvariantCulture)">@c.ToString("N0", tr) ₺</option>
+                                }
+                            </select>
+                            <button type="button" class="btn btn-primary pot-dock-toss-btn" data-action="contribute-one">Aktar</button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p class="pot-dock-closed-hint">Tur kapalı</p>
+                }
+                <div class="pot-dock-row">
+                    <span class="pot-dock-chips-label">Demo</span>
+                    <div class="pot-dock-chips">
+                        @foreach (var d in demoChips)
+                        {
+                            <button type="button" class="chip-btn" data-demo-amount="@d.ToString(CultureInfo.InvariantCulture)">+@d.ToString("N0", tr) ₺</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </aside>
+    }
+    else
+    {
+        <div class="gate-card">
+            <p class="gate-card-text">Giriş veya kayıt.</p>
+            <div class="action-row action-row--center">
+                <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Giriş</a>
+                <a class="btn btn-secondary" asp-controller="Account" asp-action="Register">Kayıt</a>
+            </div>
+        </div>
+    }
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (window.kkInitPotPage) window.kkInitPotPage();
+            if (window.refreshPersonalPotState) window.refreshPersonalPotState();
+        });
+    </script>
+}

@@ -1,0 +1,18 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Hata";
+}
+
+<div class="panel" style="max-width:560px;margin:2rem auto;">
+    <h1 class="panel-title" style="color:var(--danger);">Bir şeyler ters gitti</h1>
+    <p style="color:var(--muted); font-weight:600;">
+        İsteğiniz işlenirken beklenmeyen bir hata oluştu. Lütfen biraz sonra yeniden deneyin.
+    </p>
+    @if (Model.ShowRequestId)
+    {
+        <p style="font-size:0.9rem; color:var(--muted);">
+            <strong>İstek kimliği:</strong> <code style="color:var(--text);">@Model.RequestId</code>
+        </p>
+    }
+    <a class="btn btn-primary" asp-controller="Home" asp-action="Index" style="margin-top:1rem;">Ana sayfaya dön</a>
+</div>

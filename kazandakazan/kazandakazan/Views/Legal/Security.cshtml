@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Güvenlik";
+}
+
+<article class="legal-page panel" style="max-width:720px;margin:0 auto;">
+    <h1>Güvenlik ve veri koruma taahhüdü</h1>
+    <p>
+        Bu bölüm, prototip için <strong>tasarım hedeflerini</strong> anlatır; üretim ortamında bağımsız güvenlik testleri ve
+        sertifikasyon süreçleri zorunludur.
+    </p>
+
+    <h2>Şifreleme ve iletim</h2>
+    <p>
+        Üretimde HTTPS (TLS) zorunludur. Hassas yapılandırma anahtarları asla depoya yazılmamalı; gizli yönetim (Azure Key Vault vb.) kullanılmalıdır.
+    </p>
+
+    <h2>Kimlik doğrulama</h2>
+    <p>
+        Bu uygulama ASP.NET Core Identity ile parola tabanlı giriş sunar. Parolalar güvenli biçimde hash’lenir; düz metin saklanmaz.
+        Kötüye kullanımı azaltmak için kilitlenme (lockout) ve güçlü parola kuralları etkindir.
+    </p>
+
+    <h2>Ödeme güvenliği</h2>
+    <p>
+        Bu prototip <strong>gerçek ödeme ağı kullanmaz</strong>. Canlı ödeme entegrasyonunda PCI-DSS kapsamı, 3D Secure,
+        webhook imzaları ve idempotent işlem kayıtları gibi kontroller ayrıca tasarlanmalıdır.
+    </p>
+
+    <h2>Uygulama güvenliği</h2>
+    <ul>
+        <li>CSRF koruması (anti-forgery) formlarda kullanılmalıdır.</li>
+        <li>Girdi doğrulama ve çıktı kodlaması XSS riskini azaltır.</li>
+        <li>SQL erişimi parametreli sorgular / EF Core ile yapılmalıdır.</li>
+        <li>Güvenlik başlıkları (CSP, HSTS, X-Frame-Options) üretimde yapılandırılmalıdır.</li>
+    </ul>
+
+    <h2>İzleme ve olay kayıtları</h2>
+    <p>
+        Şüpheli oturum açma denemeleri ve kritik işlemler üretimde merkezi günlük ve uyarı sistemlerine aktarılmalıdır.
+    </p>
+</article>
