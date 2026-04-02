@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "dXtAu+DtFIw=",
+  "dgSpecHash": "HyilTFPOdgQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\kazandakazan.csproj",
+  "projectFilePath": "c:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\kazandakazan.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\yusuf.saracoglu\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\yusuf.saracoglu\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",

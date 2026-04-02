@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\kazandakazan.csproj": {}
+    "c:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\kazandakazan.csproj": {}
   },
   "projects": {
-    "C:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\kazandakazan.csproj": {
+    "c:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\kazandakazan.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\kazandakazan.csproj",
+        "projectUniqueName": "c:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\kazandakazan.csproj",
         "projectName": "kazandakazan",
-        "projectPath": "C:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\kazandakazan.csproj",
+        "projectPath": "c:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\kazandakazan.csproj",
         "packagesPath": "C:\\Users\\yusuf.saracoglu\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\obj\\",
+        "outputPath": "c:\\Users\\yusuf.saracoglu\\source\\repos\\kazandakazan\\kazandakazan\\kazandakazan\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
